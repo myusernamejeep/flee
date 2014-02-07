@@ -3,14 +3,14 @@ var gSpriteFrameCache = cc.SpriteFrameCache.getInstance();
 
 var gSharedEngine = cc.AudioEngine.getInstance();
 
-var MUSIC_BACKGROUND  = "audio/musicByFoxSynergy.mp3";
-var EFFECT_BUTTON_CHICK  = "audio/effect_buttonClick.ogg";
-var EFFECT_GAME_FAIL  = "audio/effect_game_fail.ogg";
-var EFFECT_GAME_WIN  = "audio/effect_game_pass.ogg";
-var EFFECT_PATTERN_UN_SWAP  = "audio/effect_unswap.ogg";
-var EFFECT_PATTERN_CLEAR  = "audio/effect_clearPattern.ogg";
-var EFFECT_PATTERN_BOMB  = "audio/effect_bombPattern.ogg";
-var EFFECT_TIME_WARN  = "audio/effect_timewarning.ogg";
+var MUSIC_BACKGROUND  = "res/audio/musicByFoxSynergy.mp3";
+var EFFECT_BUTTON_CHICK  = "res/audio/effect_buttonClick.ogg";
+var EFFECT_GAME_FAIL  = "res/audio/effect_game_fail.ogg";
+var EFFECT_GAME_WIN  = "res/audio/effect_game_pass.ogg";
+var EFFECT_PATTERN_UN_SWAP  = "res/audio/effect_unswap.ogg";
+var EFFECT_PATTERN_CLEAR  = "res/audio/effect_clearPattern.ogg";
+var EFFECT_PATTERN_BOMB  = "res/audio/effect_bombPattern.ogg";
+var EFFECT_TIME_WARN  = "res/audio/effect_timewarning.ogg";
 
 var g_ressources = [
     {src:"background.jpg"},

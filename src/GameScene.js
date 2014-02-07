@@ -3,14 +3,15 @@ var TAG_STAR = 11111;
 var TAG_HEART = 22222;
 var TAG_ENEMY_PLANE = 33333;
 
+
 var audioEngine = cc.AudioEngine.getInstance();
 
 var Plane = cc.Sprite.extend({
     _radius:12, // collide radius
     _rotation:0,
     _updateSpeed:0,
-    _auraOrb,
-    _bubbleOrb,
+    _auraOrb:null,
+    _bubbleOrb:null,
     _orbs:[],
 
     ctor:function(){
@@ -19,7 +20,9 @@ var Plane = cc.Sprite.extend({
 		this.setAnchorPoint(cc.p(0.5,0.5));
     },
     onEnter:function(){
-		
+    	
+		this.addOrb('bubble');
+	 
     },
 
     update:function(dt){
@@ -86,7 +89,7 @@ var Plane = cc.Sprite.extend({
     		case 'aura':
     			if (this._auraOrb) {
 		 			this._auraOrb.setVisible(false);
-		 			this._auraOrb.removeFromParentAndCleanup(true).
+		 			this._auraOrb.removeFromParent(true);
 					this._auraOrb = null;
 		 		}
 
@@ -95,7 +98,7 @@ var Plane = cc.Sprite.extend({
 		 	case 'bubble':
     			if (this._bubbleOrb) {
 		 			this._bubbleOrb.setVisible(false);
-		 			this._bubbleOrb.removeFromParentAndCleanup(true).
+		 			this._bubbleOrb.removeFromParent(true);
 					this._bubbleOrb = null;
 		 		}
 
@@ -141,7 +144,6 @@ var Plane = cc.Sprite.extend({
 
         return (dx1 - rx) * (dx1 - rx) + (dy1 - ry) * (dy1 - ry) <= r * r;
     }
-
 });
 
 var EnemyPlane = Plane.extend({
@@ -154,7 +156,7 @@ var EnemyPlane = Plane.extend({
 		}
 		
 		this.setAnchorPoint(cc.p(0.5,0.5));
-    },
+    }
 });
 
 var Item = cc.Sprite.extend({
@@ -179,7 +181,7 @@ var Item = cc.Sprite.extend({
 
     remove:function(){
     	this.setVisible(false);
-		this.removeFromParentAndCleanup(true).
+		this.removeFromParent(true);
 	}
 });
 
@@ -401,7 +403,7 @@ var GameLayer = cc.Layer.extend({
     	/////////////////////////////////////////////////////////////////////////////////
 		// add item in game 
 		this._heart = new Heart();
-		this._heart.setPosition(cc.p((Math.random() * g_winSize.width), g_winSize.height/ 2 ));
+		this._heart.setPosition(cc.p((Math.random() * g_winSize.width), (Math.random() * g_winSize.height/2) ));
 	
 		this.addChild(this._heart, 2, TAG_HEART);
 	},
@@ -409,7 +411,7 @@ var GameLayer = cc.Layer.extend({
 	addStar :function(){
    
 		this._star = new Star();
-		this._star.setPosition(cc.p((Math.random() * g_winSize.width), g_winSize.height/ 2 ));
+		this._star.setPosition(cc.p((Math.random() * g_winSize.width), (Math.random() * g_winSize.height/2)));
 	
 		this.addChild(this._star, 2, TAG_STAR);
 
@@ -470,11 +472,11 @@ var GameLayer = cc.Layer.extend({
 				this.onGameOver();
 		    }
 
-		    if (this._distance % 1000 == 0) {
+		    if (this._distance > 0 && this._distance % 1000 == 0) {
 		    	this.addStar();
 		    }
 
-		    if (this._distance % 500 == 0) {
+		    if (this._distance > 0 && this._distance % 500 == 0) {
 		    	this.addHeart();
 		    }
 		}
@@ -484,12 +486,14 @@ var GameLayer = cc.Layer.extend({
 			this.addOrb('bubble');
 	 
 			this._star.remove();
+			this._star = null;
 		}
 
 		if (this._heart) {
 			this.addOrb('aura');
 	 
 			this._heart.remove();
+			this._heart = null;
 		}
 
 		// orb logic
@@ -519,7 +523,7 @@ var GameLayer = cc.Layer.extend({
 				}
 		    }
 
-		    var isVisible = bd.getVisible();
+		    var isVisible = bd.isVisible();
 		    if (isVisible) {
 		    	count_visible += 1;
 		    }
@@ -661,3 +665,4 @@ var GameScene = cc.Scene.extend({
         this.addChild(layer);
     }
 });
+

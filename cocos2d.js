@@ -43,9 +43,9 @@
            'src/CCNotificationCenter.js',
            'src/ResultLayer.js',
            'src/GameData.js',
+           'src/GameScene.js',         
            'src/WelcomeLayer.js',
            'src/resource.js',
-	       'src/GameScene.js',         
 	       //'src/myApp.js'//add your own files in order here
         ]
     };
@@ -64,9 +64,9 @@
         return;
     }
 
-
-    window.addEventListener('DOMContentLoaded', function () {
-        this.removeEventListener('DOMContentLoaded', arguments.callee, false);
+    var fn;
+    window.addEventListener('DOMContentLoaded', fn = function () {
+        this.removeEventListener('DOMContentLoaded', fn, false);
         //first load engine file if specified
         var s = d.createElement('script');
         /*********Delete this section if you have packed all files into one*******/
@@ -87,7 +87,7 @@
             loadJsImg.id = "cocos2d_loadJsImg";
         }
         else if (c.engineDir && !c.SingleEngineFile) {
-            s.src = c.engineDir + 'platform/jsloader.js';
+            s.src = c.engineDir + 'jsloader.js';
         }
         else {
             alert('You must specify either the single engine file OR the engine directory in "cocos2d.js"');

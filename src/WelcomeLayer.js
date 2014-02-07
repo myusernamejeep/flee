@@ -163,7 +163,7 @@ var HelpLayer = BaseLayer.extend({
         arrows.setAnchorPoint(cc.p(0,0));
         arrows.setPosition(cc.pAdd(lineOnePos, cc.p(60,0)));
         */
-        var plane = cc.Sprite.create(s_plane);
+        var plane = cc.Sprite.create(s_red_plane);
         this.addChild(plane,30);
         plane.setAnchorPoint(cc.p(0,0));
         plane.setPosition(cc.pAdd(lineOnePos, cc.p(180,0)));
@@ -202,11 +202,11 @@ var HelpLayer = BaseLayer.extend({
         this.addChild(tip2, 30);
         tip2.setAnchorPoint(cc.p(0,0));
         tip2.setPosition(lineThreePos);
-        */
+        
         var boy = new Boy();
         this.addChild(boy,31);
         boy.setPosition(cc.p(g_winSize.width - 80, 150));
-        boy.setScale(0.6);
+        boy.setScale(0.6);*/
     },
     onGotoMainMenu:function(){
         var director = cc.Director.getInstance();
@@ -227,10 +227,15 @@ var WelcomeLayer = cc.Layer.extend({
             bgSprite.setPosition(cc.p(160,240));
             bgSprite.setScale(2);
             this.addChild(bgSprite);
+ 
+            var airplanes = cc.Sprite.create(s_airplanes);
+            this.addChild(airplanes,2);
+            airplanes.setAnchorPoint(cc.p(0.5,0.5));
+            airplanes.setPosition( cc.p(g_winSize.width/2, g_winSize.height/2) );
 
             var logoSprite = cc.Sprite.create("star.png");
             logoSprite.setPosition(cc.p(160,320));
-            this.addChild(logoSprite);
+            this.addChild(logoSprite, 5);
 /*
             var itemStartGame = cc.MenuItemImage.create(
                 "btnStartGameNor.png",
@@ -250,11 +255,7 @@ var WelcomeLayer = cc.Layer.extend({
             menu.setPosition(g_winSize.width/2, g_winSize.height/2);
 
 
-             var airplanes = cc.Sprite.create(s_airplanes);
-            this.addChild(airplanes,30);
-            airplanes.setAnchorPoint(cc.p(0,0));
-            airplanes.setPosition( cc.p(100, 150) );
-
+            
             /*
             var boy = new Boy();
             this.addChild(boy,31);
@@ -297,9 +298,7 @@ var WelcomeLayer = cc.Layer.extend({
         director.pushScene(s);
     }
 });
-
-
-
+ 
 var MyGameScene = cc.Scene.extend({
     onEnter:function () {
         this._super();
@@ -317,3 +316,5 @@ var MyGameScene = cc.Scene.extend({
         gSharedEngine.playMusic(MUSIC_BACKGROUND,true);
     }
 });
+
+
