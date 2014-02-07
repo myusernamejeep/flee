@@ -20,7 +20,7 @@ var Plane = cc.Sprite.extend({
 		this.setAnchorPoint(cc.p(0.5,0.5));
     },
     onEnter:function(){
-    	
+
 		this.addOrb('bubble');
 	 
     },
@@ -51,12 +51,13 @@ var Plane = cc.Sprite.extend({
     	switch(type) {
     		case 'aura':
     			if (!this._auraOrb) {
-		 			this._auraOrb = new auraOrb(); //cc.Sprite.create(s_gameWall);//new GameWall();
+		 			this._auraOrb = new auraOrb();  
 					this.addChild(this._auraOrb,-2);
-					this._auraOrb.setAnchorPoint(cc.p(0.5,0.5));
+					this._bubbleOrb.setAnchorPoint(cc.p(0 ,0));
 					var oContentsize = this._auraOrb.getContentSize();
-					this._auraOrb.setPosition(cc.p(-oContentsize.with/2,-oContentsize.height/2));
-
+					//this._auraOrb.setPosition(cc.p(-oContentsize.width/2,-oContentsize.height/2));
+					this._bubbleOrb.setPosition(cc.p(- orbSize.width/2 + planeSize.width/2, - orbSize.height/2 + planeSize.height/2 ));
+	 
 					this._orbs.push(this._auraOrb);
 		 		}
 
@@ -64,12 +65,13 @@ var Plane = cc.Sprite.extend({
 
 		 	case 'bubble':
     			if (!this._bubbleOrb) {
-		 			this._bubbleOrb = new bubbleOrb(); //cc.Sprite.create(s_gameWall);//new GameWall();
+		 			this._bubbleOrb = new bubbleOrb(); 
 					this.addChild(this._bubbleOrb,-2);
-					this._bubbleOrb.setAnchorPoint(cc.p(0.5,0.5));
-					var oContentsize = this._bubbleOrb.getContentSize();
-					this._bubbleOrb.setPosition(cc.p(-oContentsize.with/2,-oContentsize.height/2));
-
+ 					this._bubbleOrb.setAnchorPoint(cc.p(0 ,0));
+					var orbSize = this._bubbleOrb.getContentSize();
+					var planeSize = this.getContentSize();
+					this._bubbleOrb.setPosition(cc.p(- orbSize.width/2 + planeSize.width/2, - orbSize.height/2 + planeSize.height/2 ));
+	 
 					this._orbs.push(this._bubbleOrb);
 		 		}
 
@@ -314,6 +316,8 @@ var GameLayer = cc.Layer.extend({
     _bestScore:0,
     _labelScore:null,
     isPressed:false,
+    _enemies:[],
+    _projectiles:[],
 
     ctor:function(){
 		this._super();
@@ -383,10 +387,94 @@ var GameLayer = cc.Layer.extend({
 
 		// update
 		this.schedule(this.update,0.1);
+
+		this.addEnemy();
 		// this.scheduleUpdate();
 
     },
 
+    addProjectileObject:function(projectile, location) {
+    	// Set up initial location of the projectile
+	    //var projectile = sprite;
+	    //projectile.setPosition(20, g_winSize.height/2);
+	 
+	    // Determine offset of location to projectile
+	    var offset = cc.pSub(projectile.getPosition(), location); // 1
+	 	console.log('offset x', offset.x);
+	    // Bail out if you are shooting down or backwards
+	    if (offset.x <= 0) return;
+	 
+	    // Ok to add now - we've double checked position
+	    //this.addChild(projectile);
+	 
+	    // Figure out final destination of projectile
+	    var realX = g_winSize.width + (projectile.getContentSize().width / 2);
+	    var ratio = offset.y / offset.x;
+	    var realY = (realX * ratio) + projectile.getPosition().y;
+	    var realDest = cc.p(realX, realY);
+	 
+	    // Determine the length of how far you're shooting
+	    var offset = cc.pSub(realDest, projectile.getPosition());
+	    var length = cc.pLength(offset);
+	    var velocity = 480.0;
+	    var realMoveDuration = length / velocity;
+	 
+	 	console.log('realMoveDuration', realMoveDuration);
+	    console.log('realDest', realDest);
+	    
+	    // Move projectile to actual endpoint
+	    projectile.runAction(cc.Sequence.create( // 2
+	        cc.MoveTo.create(realMoveDuration, realDest),
+	        cc.CallFunc.create(function(node) {
+	        	console.log('projectile', node);
+	    
+	            cc.ArrayRemoveObject(this._projectiles, node);
+	            node.removeFromParent();
+	        }, this)
+	    ));
+	 
+	    // Add to array
+	    projectile.setTag(2);
+	    this._projectiles.push(projectile);
+    },
+
+    addEnemy:function() {
+	 
+	    var monster = new EnemyPlane('green');
+	 
+	    // Determine where to spawn the monster along the Y axis
+	    var minY = monster.getContentSize().height / 2;
+	    var maxY = g_winSize.height - monster.getContentSize().height / 2;
+	    var rangeY = maxY - minY;
+	    var actualY = (Math.random() * rangeY) + minY; // 1
+	 
+	    // Create the monster slightly off-screen along the right edge,
+	    // and along a random position along the Y axis as calculated above
+	    monster.setPosition(g_winSize.width + monster.getContentSize().width/2, actualY);
+	    this.addChild(monster); // 2
+	 
+	    // Determine speed of the monster
+	    var minDuration = 2.0;
+	    var maxDuration = 4.0;
+	    var rangeDuration = maxDuration - minDuration;
+	    var actualDuration = (Math.random() % rangeDuration) + minDuration;
+	 
+	    // Create the actions
+	    var actionMove = cc.MoveTo.create(actualDuration, cc.p(-monster.getContentSize().width/2, actualY)); // 3
+	    var actionMoveDone = cc.CallFunc.create(function(node) { // 4
+	        cc.ArrayRemoveObject(this._enemies, node); // 5
+	        node.removeFromParent();
+	    }, this); 
+	    monster.runAction(cc.Sequence.create(actionMove, actionMoveDone));
+	 
+	    // Add to array
+	    monster.setTag(1);
+	    this._enemies.push(monster); // 6
+
+	    // add projectile 
+	    this.addProjectileObject(monster, this._plane.getPosition());
+	 
+	},
     addOrb :function(){
     	/////////////////////////////////////////////////////////////////////////////////
 		// orb
@@ -536,6 +624,25 @@ var GameLayer = cc.Layer.extend({
 				bd.setVisible(true);
 			}
 		}
+
+		// check projectile crash our plane
+		var plane = this._plane;
+		for (var i = 0; i < this._projectiles.length; i++) {
+	        var projectile = this._projectiles[i];
+	        //for (var j = 0; j < this._monsters.length; j++) {
+	            //var monster = this._monsters[j];
+	            var projectileRect = projectile.getBoundingBox();
+	            var planeRect = plane.getBoundingBox();
+	            if (cc.rectIntersectsRect(projectileRect, planeRect)) {
+	                cc.log("collision!");
+	                cc.ArrayRemoveObject(this._projectiles, projectile);
+	                projectile.removeFromParent();
+	                //cc.ArrayRemoveObject(this._monsters, monster);
+	                planeRect.removeFromParent();         
+	                this.onGameOver();       
+	            }
+	        //}
+	    }
 
 		////////////////////////////////////////////////////////////////////////////////
 		// score

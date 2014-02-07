@@ -144,11 +144,19 @@ var HelpLayer = BaseLayer.extend({
         var lineTwoPos = cc.p(50,g_winSize.height - 160);
         var lineThreePos = cc.p(100, g_winSize.height - 300);
 
+        var size = cc.Director.getInstance().getWinSize();
+        //var bg = cc.Sprite.create(s_Bluesky);
+        this._bgSky = cc.LayerColor.create(cc.c4b(0,191,255,255),size.width,size.height);
+        this._bgSky.setAnchorPoint(cc.p(0,0));
+
+        this._bgSky.setPosition(cc.p(0.0));
+        this.addChild(this._bgSky, 1);
+
         cc.MenuItemFont.setFontName("Arial");
         var menuMain = cc.MenuItemFont.create("Main Menu", this.onGotoMainMenu, this);
-        menuMain.setColor(new cc.Color3B(255,0,0));
+        menuMain.setColor(new cc.Color3B(255,255,255));
         var menu = cc.Menu.create(menuMain);
-        this.addChild(menu, 10);
+        this.addChild(menu, 50);
         menu.setPosition(cc.p(g_winSize.width/2, g_winSize.height/3));
         /*
         var tag1 = cc.Sprite.create(s_helpTag1);
@@ -164,7 +172,7 @@ var HelpLayer = BaseLayer.extend({
         arrows.setPosition(cc.pAdd(lineOnePos, cc.p(60,0)));
         */
         var plane = cc.Sprite.create(s_red_plane);
-        this.addChild(plane,30);
+        this.addChild(plane,40);
         plane.setAnchorPoint(cc.p(0,0));
         plane.setPosition(cc.pAdd(lineOnePos, cc.p(180,0)));
 
@@ -173,7 +181,9 @@ var HelpLayer = BaseLayer.extend({
         var paper_airplane = cc.Sprite.create(s_paper_airplane);
         this.addChild(paper_airplane,30);
         paper_airplane.setAnchorPoint(cc.p(0,0));
-        paper_airplane.setPosition(cc.pAdd(lineOnePos, cc.p(250,100)));
+        paper_airplane.setOpacity(1);
+        var oContentsize = paper_airplane.getContentSize();
+        paper_airplane.setPosition(cc.p(g_winSize.width/2 - oContentsize.width/2, g_winSize.height/2 - oContentsize.height/2));
 
         
         /*
